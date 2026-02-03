@@ -1,25 +1,25 @@
 package com.gateway.config;
 
-import com.gateway.filter.JwtAuthenticationFilter;
+import  com.gateway.filter.JwtAuthenticationFilter;
 import com.gateway.filter.RoleBasedAuthorizationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter authFilter;
+    private final JwtAuthenticationFilter authFilter;
 
-    @Autowired
-    private RoleBasedAuthorizationFilter roleFilter;
+    private final RoleBasedAuthorizationFilter roleFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter authFilter, RoleBasedAuthorizationFilter roleFilter) {
+        this.authFilter = authFilter;
+        this.roleFilter = roleFilter;
+    }
 
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
@@ -27,7 +27,7 @@ public class SecurityConfig {
                 // Auth service routes
                 .route("auth-service", r -> r
                         .path("/auth/**" ,"/v3/api-docs/", "/swagger-ui/**", "/swagger-ui.html")
-                        .uri("lb://auth-service"))
+                        .uri("${AUTH_SERVICE_URL}"))
 
                 .route("auth-service", r-> r
                         .path("/auth/delete/id/{userId}")
@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .filter(getRoleFilterForAdmin())
                         )
-                        .uri("lb://auth-service")
+                        .uri("${AUTH_SERVICE_URL}")
                 )
 
                 //Event service routes
@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .filters(f -> f
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                         )
-                        .uri("lb://event-service"))
+                        .uri("${EVENT_SERVICE_URL}"))
 
                 //User Service routes
                 .route("user-service",r-> r
@@ -60,7 +60,7 @@ public class SecurityConfig {
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .filter(getRoleFilterForAdmin())
                         )
-                        .uri("lb://user-service"))
+                        .uri("${USER_SERVICE_URL}"))
 
 
                 .route("user-service",r-> r
@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .filters(f -> f
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                         )
-                        .uri("lb://user-service"))
+                        .uri("${USER_SERVICE_URL}"))
 
 
                 //booking service routes
@@ -78,14 +78,14 @@ public class SecurityConfig {
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .filter(getRoleFilterForAdmin())
                         )
-                        .uri("lb://booking-service"))
+                        .uri("${BOOKING_SERVICE_URL}"))
 
                 .route("booking-service",r-> r
                         .path("/bookings/**")
                         .filters(f -> f
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                         )
-                        .uri("lb://booking-service"))
+                        .uri("${BOOKING_SERVICE_URL}"))
 
 
                 //payment service routes
@@ -94,13 +94,13 @@ public class SecurityConfig {
                         .filters(f -> f
                                 .filter(authFilter.apply(new JwtAuthenticationFilter.Config()))
                         )
-                        .uri("lb://payment-service"))
+                        .uri("${PAYMENT_SERVICE_URL}"))
 
 
                 //notification service
                 .route("notification-service",r-> r
                         .path("/notify/**")
-                        .uri("lb://notification-service"))
+                        .uri("${NOTIFICATION_SERVICE_URL}"))
 
                 .build();
     }
