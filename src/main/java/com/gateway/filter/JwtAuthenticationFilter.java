@@ -114,8 +114,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory <JwtAu
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
+
 
     public static class Config {
     }
