@@ -10,20 +10,53 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+//@Configuration
+//public class CorsConfig {
+//
+//    @Bean
+//    public CorsWebFilter corsWebFilter() {
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+//        corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
+//        corsConfig.addAllowedOriginPattern("http://localhost:4200");
+//        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
+//        corsConfig.setAllowedHeaders(List.of("*"));// Allow all headers
+//        corsConfig.setExposedHeaders(Arrays.asList(
+//                "X-Auth-User",
+//                "X-Auth-Roles"
+//        ));
+//        corsConfig.setAllowCredentials(true);
+//        corsConfig.setMaxAge(3600L);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfig);
+//
+//        return new CorsWebFilter(source);
+//    }
+//}
+
 @Configuration
 public class CorsConfig {
 
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
-        corsConfig.addAllowedOriginPattern("http://localhost:4200");
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
-        corsConfig.setAllowedHeaders(List.of("*"));// Allow all headers
+
+        // Allow LOCAL + VERCEL
+        corsConfig.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",
+                "https://angular-frontend-eta.vercel.app"
+        ));
+
+        corsConfig.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+        ));
+
+        corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setExposedHeaders(Arrays.asList(
                 "X-Auth-User",
                 "X-Auth-Roles"
         ));
+
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
 
