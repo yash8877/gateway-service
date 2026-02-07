@@ -8,6 +8,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -24,12 +25,18 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory <JwtAuthenticationFilter.Config>{
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secretKey;
 
     public JwtAuthenticationFilter() {
         super(Config.class);
     }
+
+    @PostConstruct
+    public void checkSecret() {
+        log.info("JWT SECRET = [{}]",secretKey);
+    }
+
 
     @Override
     public GatewayFilter apply(Config config) {
